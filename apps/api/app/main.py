@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pathlib import Path
+# from pathlib import Path  # uncomment if re-enabling document file storage
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from .auth import Actor, get_actor, require_lead
 from .config import get_settings
-from .db import Document, SessionLocal, Term, init_db, utcnow
+from .db import SessionLocal, Term, init_db, utcnow  # Document — if re-enabling file storage
 from .merge import merge_candidates
 from .nlp_client import extract_candidates
 from .schemas import (
@@ -251,7 +251,6 @@ async def upload_document(
     session: Session = Depends(db_session),
 ) -> UploadResult:
     require_lead(actor)
-    settings = get_settings()
     raw = await file.read()
     filename = file.filename or "upload.txt"
     try:
@@ -260,19 +259,21 @@ async def upload_document(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     doc_id = str(uuid4())
-    dest = Path(settings.upload_dir) / f"{doc_id}_{Path(filename).name}"
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_bytes(raw)
-    doc = Document(
-        id=doc_id,
-        team_id=settings.team_id,
-        filename=filename,
-        stored_path=str(dest),
-        text_preview=text[:2000],
-        uploaded_by=actor.user,
-    )
-    session.add(doc)
-    session.commit()
+    # Optional: persist uploaded file + document record (disabled — only terms are kept)
+    # settings = get_settings()
+    # dest = Path(settings.upload_dir) / f"{doc_id}_{Path(filename).name}"
+    # dest.parent.mkdir(parents=True, exist_ok=True)
+    # dest.write_bytes(raw)
+    # doc = Document(
+    #     id=doc_id,
+    #     team_id=settings.team_id,
+    #     filename=filename,
+    #     stored_path=str(dest),
+    #     text_preview=text[:2000],
+    #     uploaded_by=actor.user,
+    # )
+    # session.add(doc)
+    # session.commit()
 
     candidates = await extract_candidates(text)
     stats = merge_candidates(session, candidates, actor_user=actor.user, source="upload")
@@ -294,26 +295,27 @@ async def paste_document(
     session: Session = Depends(db_session),
 ) -> UploadResult:
     require_lead(actor)
-    settings = get_settings()
     text = (body.get("text") or "").strip()
     if not text:
         raise HTTPException(status_code=400, detail="text is required")
     filename = body.get("filename") or "pasted.txt"
     doc_id = str(uuid4())
-    dest = Path(settings.upload_dir) / f"{doc_id}_{filename}"
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(text, encoding="utf-8")
-    session.add(
-        Document(
-            id=doc_id,
-            team_id=settings.team_id,
-            filename=filename,
-            stored_path=str(dest),
-            text_preview=text[:2000],
-            uploaded_by=actor.user,
-        )
-    )
-    session.commit()
+    # Optional: persist pasted text as file + document record (disabled — only terms are kept)
+    # settings = get_settings()
+    # dest = Path(settings.upload_dir) / f"{doc_id}_{filename}"
+    # dest.parent.mkdir(parents=True, exist_ok=True)
+    # dest.write_text(text, encoding="utf-8")
+    # session.add(
+    #     Document(
+    #         id=doc_id,
+    #         team_id=settings.team_id,
+    #         filename=filename,
+    #         stored_path=str(dest),
+    #         text_preview=text[:2000],
+    #         uploaded_by=actor.user,
+    #     )
+    # )
+    # session.commit()
     candidates = await extract_candidates(text)
     stats = merge_candidates(session, candidates, actor_user=actor.user, source="upload")
     return UploadResult(
