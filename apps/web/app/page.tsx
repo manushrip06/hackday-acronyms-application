@@ -11,7 +11,7 @@ export default function HomePage() {
       </p>
       <div className="panel">
         <div className="row">
-          <Link className="primary" href="/upload" style={{ padding: "0.55rem 0.95rem", borderRadius: 10, background: "var(--accent)", color: "#06241c", fontWeight: 700 }}>
+          <Link className="primary" href="/upload" style={{ padding: "0.55rem 0.95rem", borderRadius: 10, background: "var(--accent)", color: "#FAF6EC", fontWeight: 700 }}>
             Upload docs
           </Link>
           <Link href="/lookup" style={{ padding: "0.55rem 0.95rem", borderRadius: 10, border: "1px solid var(--line)", fontWeight: 700 }}>

@@ -1,14 +1,17 @@
 :root {
-  --bg: #0f1c24;
-  --bg-elev: #17303c;
-  --ink: #eef6f4;
-  --muted: #9db5b0;
-  --accent: #3dcfb0;
-  --accent-2: #f0a35e;
-  --danger: #e86a6a;
-  --line: rgba(238, 246, 244, 0.12);
-  --font-display: "Fraunces", Georgia, serif;
+  --bg: #faf6ec;
+  --bg-elev: #fffdf8;
+  --ink: #1a1714;
+  --muted: #6b6153;
+  --accent: #c8102e;      /* Farm Red — primary actions */
+  --accent-ink: #faf6ec;  /* text placed on top of --accent */
+  --accent-2: #c9b48c;    /* Khaki — secondary, "filed" state */
+  --danger: #8c0f26;      /* Oxblood — reject / destructive */
+  --line: #e4d9be;
+  --shadow: 0 6px 20px rgba(26, 23, 20, 0.08);
+  --font-display: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
   --font-body: "Source Sans 3", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
 * {
@@ -20,10 +23,11 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(61, 207, 176, 0.18), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(240, 163, 94, 0.14), transparent 55%),
-    linear-gradient(160deg, #0c161c 0%, #132833 45%, #0f1c24 100%);
+  background: var(--bg);
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(26, 23, 20, 0.035) 1px, transparent 0),
+    radial-gradient(1px 1px at 70px 90px, rgba(26, 23, 20, 0.035) 1px, transparent 0);
+  background-size: 100px 100px;
   color: var(--ink);
   font-family: var(--font-body);
 }
@@ -36,8 +40,10 @@ a {
 main {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 3rem;
+  padding: 2rem 1.25rem 4rem;
 }
+
+/* ---------- Nav: the "policy card" header ---------- */
 
 .nav {
   display: flex;
@@ -45,10 +51,9 @@ main {
   gap: 0.75rem 1.25rem;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(8px);
-  background: rgba(15, 28, 36, 0.7);
+  padding: 1rem 1.5rem;
+  background: var(--accent);
+  border-bottom: 4px solid var(--ink);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -56,29 +61,38 @@ main {
 
 .brand {
   font-family: var(--font-display);
+  font-weight: 800;
   font-size: 1.35rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  color: var(--accent-ink);
+  text-transform: uppercase;
 }
 
 .brand span {
-  color: var(--accent);
+  color: var(--ink);
 }
 
 .nav-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 1.25rem;
 }
 
 .nav-links a {
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 0.95rem;
+  color: rgba(250, 246, 236, 0.78);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .nav-links a:hover,
 .nav-links a.active {
-  color: var(--ink);
+  color: var(--accent-ink);
+  border-bottom-color: var(--ink);
 }
 
 .controls {
@@ -89,40 +103,71 @@ main {
 }
 
 .pill {
-  border: 1px solid var(--line);
-  background: var(--bg-elev);
-  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  background: transparent;
+  color: var(--accent-ink);
   border-radius: 999px;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.85rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
   cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .pill.active {
-  border-color: var(--accent);
-  color: var(--accent);
+  background: var(--ink);
+  color: var(--accent-ink);
 }
+
+.pill:hover:not(.active) {
+  background: rgba(26, 23, 20, 0.15);
+}
+
+/* ---------- Type ---------- */
 
 h1,
 h2 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  letter-spacing: -0.01em;
   margin: 0 0 0.5rem;
+}
+
+h1 {
+  font-size: 2rem;
 }
 
 .lede {
   color: var(--muted);
   max-width: 42rem;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
+  line-height: 1.55;
+  margin-bottom: 1.75rem;
 }
 
+/* ---------- Panel: filed index card, folder-tab signature ---------- */
+
 .panel {
-  background: rgba(23, 48, 60, 0.72);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 1.25rem;
-  margin-bottom: 1.25rem;
+  position: relative;
+  background: var(--bg-elev);
+  border: 1.5px solid var(--line);
+  border-left: 6px solid var(--accent);
+  border-radius: 4px;
+  padding: 1.5rem 1.25rem 1.25rem;
+  margin: 1.75rem 0 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 22px;
+  width: 56px;
+  height: 12px;
+  background: var(--accent-2);
+  border: 1.5px solid var(--line);
+  border-bottom: none;
+  clip-path: polygon(12% 0, 88% 0, 100% 100%, 0% 100%);
 }
 
 .row {
@@ -134,21 +179,32 @@ h2 {
 
 label {
   display: block;
-  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--muted);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
 }
 
 input,
 textarea,
 select {
   width: 100%;
-  background: #0d1a21;
-  border: 1px solid var(--line);
+  background: var(--bg);
+  border: 1.5px solid var(--line);
   color: var(--ink);
-  border-radius: 10px;
+  border-radius: 6px;
   padding: 0.65rem 0.75rem;
   font: inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.15);
 }
 
 textarea {
@@ -156,38 +212,54 @@ textarea {
   resize: vertical;
 }
 
+/* ---------- Buttons ---------- */
+
 button.primary,
 button.secondary,
 button.danger {
   border: none;
-  border-radius: 10px;
-  padding: 0.55rem 0.95rem;
+  border-radius: 6px;
+  padding: 0.55rem 1.1rem;
   font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
   font: inherit;
+  transition: transform 0.1s ease, opacity 0.15s ease;
 }
 
 button.primary {
   background: var(--accent);
-  color: #06241c;
+  color: var(--accent-ink);
 }
 
 button.secondary {
   background: transparent;
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--ink);
   color: var(--ink);
 }
 
 button.danger {
   background: transparent;
-  border: 1px solid var(--danger);
+  border: 1.5px solid var(--danger);
   color: var(--danger);
 }
 
+button.primary:hover,
+button.secondary:hover,
+button.danger:hover {
+  opacity: 0.82;
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
 button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* ---------- Table: ledger style ---------- */
 
 table {
   width: 100%;
@@ -197,52 +269,70 @@ table {
 th,
 td {
   text-align: left;
-  padding: 0.65rem 0.4rem;
+  padding: 0.75rem 0.5rem;
   border-bottom: 1px solid var(--line);
   vertical-align: top;
 }
 
 th {
+  font-family: var(--font-mono);
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
+
+tbody tr:hover {
+  background: rgba(201, 180, 140, 0.14);
+}
+
+/* ---------- Badges: red = needs attention, khaki = filed ---------- */
 
 .badge {
   display: inline-block;
-  font-size: 0.75rem;
-  padding: 0.15rem 0.45rem;
-  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
   border: 1px solid var(--line);
   color: var(--muted);
 }
 
 .badge.pending {
-  color: var(--accent-2);
-  border-color: rgba(240, 163, 94, 0.4);
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .badge.approved {
-  color: var(--accent);
-  border-color: rgba(61, 207, 176, 0.4);
+  color: var(--ink);
+  background: var(--accent-2);
+  border-color: var(--accent-2);
 }
+
+/* ---------- Messages ---------- */
 
 .msg {
   margin-top: 0.75rem;
   color: var(--muted);
   white-space: pre-wrap;
+  font-size: 0.92rem;
 }
 
 .msg.error {
   color: var(--danger);
+  font-weight: 600;
 }
 
+/* ---------- Lookup highlight + popover ---------- */
+
 .term-hit {
-  background: rgba(61, 207, 176, 0.22);
+  background: rgba(201, 180, 140, 0.45);
   border-bottom: 2px solid var(--accent);
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 2px;
   padding: 0 2px;
 }
 
@@ -250,20 +340,22 @@ th {
   position: absolute;
   z-index: 20;
   max-width: 320px;
-  background: #10262f;
-  border: 1px solid var(--accent);
-  border-radius: 12px;
-  padding: 0.85rem;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  background: var(--bg-elev);
+  border: 1.5px solid var(--ink);
+  border-top: 4px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.9rem;
+  box-shadow: 0 14px 34px rgba(26, 23, 20, 0.25);
 }
 
 .popover strong {
   font-family: var(--font-display);
+  font-weight: 800;
 }
 
 .lookup-surface {
   position: relative;
-  line-height: 1.7;
+  line-height: 1.75;
   font-size: 1.1rem;
   white-space: pre-wrap;
 }
@@ -271,5 +363,11 @@ th {
 @media (max-width: 720px) {
   .nav {
     align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
   }
 }
