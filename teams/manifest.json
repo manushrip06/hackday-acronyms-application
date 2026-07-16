@@ -1,0 +1,50 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "1.0.0",
+  "id": "f6a8c2e1-4b7d-4e9a-9c31-hackdayacronyms01",
+  "developer": {
+    "name": "Hackday Acronyms Team",
+    "websiteUrl": "https://localhost:3000",
+    "privacyUrl": "https://localhost:3000",
+    "termsOfUseUrl": "https://localhost:3000"
+  },
+  "name": {
+    "short": "Acronym Atlas",
+    "full": "Acronym Atlas — team jargon dictionary"
+  },
+  "description": {
+    "short": "Look up team-specific acronyms from your docs.",
+    "full": "Leads upload documentation; AI extracts jargon into a reviewable dictionary. Members click unclear terms in the Lookup tab to see definitions. Sideload for hackday — no AppSource required."
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "accentColor": "#3DCFB0",
+  "staticTabs": [
+    {
+      "entityId": "lookup",
+      "name": "Lookup",
+      "contentUrl": "https://REPLACE_WITH_HTTPS_TUNNEL/lookup",
+      "websiteUrl": "https://REPLACE_WITH_HTTPS_TUNNEL/lookup",
+      "scopes": ["personal"]
+    },
+    {
+      "entityId": "dictionary",
+      "name": "Dictionary",
+      "contentUrl": "https://REPLACE_WITH_HTTPS_TUNNEL/dictionary",
+      "websiteUrl": "https://REPLACE_WITH_HTTPS_TUNNEL/dictionary",
+      "scopes": ["personal"]
+    },
+    {
+      "entityId": "upload",
+      "name": "Upload",
+      "contentUrl": "https://REPLACE_WITH_HTTPS_TUNNEL/upload",
+      "websiteUrl": "https://REPLACE_WITH_HTTPS_TUNNEL/upload",
+      "scopes": ["personal"]
+    }
+  ],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": ["REPLACE_WITH_HTTPS_TUNNEL_HOST"]
+}

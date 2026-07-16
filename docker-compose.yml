@@ -1,0 +1,34 @@
+services:
+  api:
+    build: ./apps/api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: sqlite:///./data/acronyms.db
+      NLP_URL: http://nlp:8001
+      UPLOAD_DIR: ./data/uploads
+      TEAM_ID: default
+    volumes:
+      - api-data:/app/data
+    depends_on:
+      - nlp
+
+  nlp:
+    build: ./apps/nlp
+    ports:
+      - "8001:8001"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+
+  web:
+    build: ./apps/web
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - api
+
+volumes:
+  api-data:
