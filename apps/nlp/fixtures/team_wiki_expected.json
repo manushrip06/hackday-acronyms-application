@@ -1,24 +1,41 @@
-{
-  "text_file": "docs/sample-docs/team-wiki.md",
-  "expected_terms": [
-    "PIR",
-    "GTM",
-    "BAU",
-    "SLO",
-    "RFC",
-    "OKR",
-    "CISO",
-    "WAR",
-    "ACR",
-    "CI",
-    "GA",
-    "MVP",
-    "QBR",
-    "ReleaseCaptain",
-    "DesignDoc",
-    "ServiceMesh",
-    "FeatureToggle",
-    "ProductOwner",
-    "API Gateway"
-  ]
-}
+[
+  {
+    "name": "team_wiki",
+    "text_file": "docs/sample-docs/team-wiki.md",
+    "expected_terms": [
+      "PIR",
+      "GTM",
+      "BAU",
+      "SLO",
+      "RFC",
+      "OKR",
+      "CISO",
+      "WAR",
+      "ACR",
+      "CI",
+      "GA",
+      "MVP",
+      "QBR",
+      "ReleaseCaptain",
+      "DesignDoc",
+      "ServiceMesh",
+      "FeatureToggle",
+      "ProductOwner",
+      "API Gateway"
+    ]
+  },
+  {
+    "name": "product_breakdown",
+    "text_file": "docs/sample-docs/product-breakdown.md",
+    "expected_terms": [
+      "TLR",
+      "REX",
+      "RAMP",
+      "PulseRoom",
+      "DesignDoc",
+      "ToggleGate",
+      "OpsLead",
+      "DriftLoop"
+    ]
+  }
+]

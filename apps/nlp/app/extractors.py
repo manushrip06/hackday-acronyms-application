@@ -10,7 +10,7 @@ STOP_ACRONYMS = {
     "WAS", "ONE", "OUR", "OUT", "DAY", "GET", "HAS", "HIM", "HIS", "HOW", "ITS",
     "MAY", "NEW", "NOW", "OLD", "SEE", "WAY", "WHO", "BOY", "DID", "LET", "PUT",
     "SAY", "SHE", "TOO", "USE", "PDF", "HTTP", "HTTPS", "URL", "JSON", "HTML",
-    "CSS", "UTC", "GMT", "AM", "PM", "ID", "OK",
+    "CSS", "UTC", "GMT", "AM", "PM", "ID", "OK", "US"
 }
 
 STOP_WORDS = {
