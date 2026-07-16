@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRole } from "@/lib/role";
+import { MOCK_TEAMS, useTeam, type TeamId } from "@/lib/team";
 
 const links = [
   { href: "/", label: "Home" },
@@ -15,6 +16,7 @@ const links = [
 export function Nav() {
   const pathname = usePathname();
   const { role, setRole, jargonAssist, setJargonAssist } = useRole();
+  const { teamId, setTeamId, activeTeam } = useTeam();
 
   return (
     <header className="nav">
@@ -29,6 +31,22 @@ export function Nav() {
         ))}
       </nav>
       <div className="controls">
+        <label htmlFor="team-select" className="sr-only">
+          Team
+        </label>
+        <select
+          id="team-select"
+          className="team-select"
+          value={teamId}
+          onChange={(e) => setTeamId(e.target.value as TeamId)}
+        >
+          {MOCK_TEAMS.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
+            </option>
+          ))}
+        </select>
+        <span className="team-badge">{activeTeam.name}</span>
         <button
           type="button"
           className={`pill ${role === "lead" ? "active" : ""}`}

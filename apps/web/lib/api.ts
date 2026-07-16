@@ -41,6 +41,7 @@ export async function apiFetch<T>(
     method?: string;
     role: Role;
     user?: string;
+    teamId?: string;
     body?: BodyInit | null;
     headers?: Record<string, string>;
   }
@@ -48,6 +49,7 @@ export async function apiFetch<T>(
   const headers: Record<string, string> = {
     "X-Role": opts.role,
     "X-User": opts.user || opts.role,
+    "X-Team-Id": opts.teamId || "default",
     ...(opts.headers || {}),
   };
   if (opts.body && !(opts.body instanceof FormData)) {

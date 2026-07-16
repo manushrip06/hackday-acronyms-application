@@ -5,11 +5,10 @@ from uuid import uuid4
 
 from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import func, or_, select
+from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session
 
-from .auth import Actor, get_actor, require_lead
-from .config import get_settings
+from .auth import Actor, get_actor, get_team_id, require_lead
 from .db import SessionLocal, Term, init_db, utcnow  # Document — if re-enabling file storage
 from .merge import merge_candidates
 from .nlp_client import extract_candidates
@@ -80,14 +79,27 @@ def health() -> Health:
     return Health(service="api")
 
 
+@app.post("/demo/reset")
+def reset_team_dictionary(
+    actor: Actor = Depends(get_actor),
+    team_id: str = Depends(get_team_id),
+    session: Session = Depends(db_session),
+) -> dict:
+    """Hackday demo: wipe this team's terms so Dictionary starts empty again."""
+    require_lead(actor)
+    result = session.execute(delete(Term).where(Term.team_id == team_id))
+    session.commit()
+    return {"ok": True, "team_id": team_id, "deleted": result.rowcount or 0}
+
+
 @app.get("/terms", response_model=list[TermOut])
 def list_terms(
     q: str | None = None,
     status: str | None = Query(default=None),
+    team_id: str = Depends(get_team_id),
     session: Session = Depends(db_session),
 ) -> list[TermOut]:
-    settings = get_settings()
-    stmt = select(Term).where(Term.team_id == settings.team_id)
+    stmt = select(Term).where(Term.team_id == team_id)
     if status:
         stmt = stmt.where(Term.status == status)
     else:
@@ -104,12 +116,12 @@ def list_terms(
 def suggest_term(
     body: TermSuggest,
     actor: Actor = Depends(get_actor),
+    team_id: str = Depends(get_team_id),
     session: Session = Depends(db_session),
 ) -> TermOut:
-    settings = get_settings()
     existing = session.scalar(
         select(Term).where(
-            Term.team_id == settings.team_id,
+            Term.team_id == team_id,
             func.lower(Term.term) == body.term.strip().lower(),
         )
     )
@@ -128,7 +140,7 @@ def suggest_term(
         return term_to_out(existing)
 
     row = Term(
-        team_id=settings.team_id,
+        team_id=team_id,
         term=body.term.strip(),
         definition=body.definition,
         aliases=aliases_dumps(body.aliases),
@@ -150,11 +162,12 @@ def edit_term(
     term_id: str,
     body: TermUpdate,
     actor: Actor = Depends(get_actor),
+    team_id: str = Depends(get_team_id),
     session: Session = Depends(db_session),
 ) -> TermOut:
     require_lead(actor)
     row = session.get(Term, term_id)
-    if not row:
+    if not row or row.team_id != team_id:
         raise HTTPException(status_code=404, detail="Term not found")
     if body.term is not None:
         row.term = body.term.strip()
@@ -177,11 +190,12 @@ def edit_term(
 def delete_term(
     term_id: str,
     actor: Actor = Depends(get_actor),
+    team_id: str = Depends(get_team_id),
     session: Session = Depends(db_session),
 ) -> dict:
     require_lead(actor)
     row = session.get(Term, term_id)
-    if not row:
+    if not row or row.team_id != team_id:
         raise HTTPException(status_code=404, detail="Term not found")
     session.delete(row)
     session.commit()
@@ -191,14 +205,14 @@ def delete_term(
 @app.get("/review", response_model=list[TermOut])
 def review_queue(
     actor: Actor = Depends(get_actor),
+    team_id: str = Depends(get_team_id),
     session: Session = Depends(db_session),
 ) -> list[TermOut]:
     require_lead(actor)
-    settings = get_settings()
     rows = session.scalars(
         select(Term)
         .where(
-            Term.team_id == settings.team_id,
+            Term.team_id == team_id,
             or_(Term.status == "pending", Term.conflict_note.is_not(None)),
         )
         .order_by(Term.updated_at.desc())
@@ -210,11 +224,12 @@ def review_queue(
 def approve_term(
     term_id: str,
     actor: Actor = Depends(get_actor),
+    team_id: str = Depends(get_team_id),
     session: Session = Depends(db_session),
 ) -> TermOut:
     require_lead(actor)
     row = session.get(Term, term_id)
-    if not row:
+    if not row or row.team_id != team_id:
         raise HTTPException(status_code=404, detail="Term not found")
     row.status = "approved"
     row.conflict_note = None
@@ -229,11 +244,12 @@ def approve_term(
 def reject_term(
     term_id: str,
     actor: Actor = Depends(get_actor),
+    team_id: str = Depends(get_team_id),
     session: Session = Depends(db_session),
 ) -> TermOut:
     require_lead(actor)
     row = session.get(Term, term_id)
-    if not row:
+    if not row or row.team_id != team_id:
         raise HTTPException(status_code=404, detail="Term not found")
     row.status = "rejected"
     row.conflict_note = None
@@ -248,6 +264,7 @@ def reject_term(
 async def upload_document(
     file: UploadFile = File(...),
     actor: Actor = Depends(get_actor),
+    team_id: str = Depends(get_team_id),
     session: Session = Depends(db_session),
 ) -> UploadResult:
     require_lead(actor)
@@ -275,8 +292,10 @@ async def upload_document(
     # session.add(doc)
     # session.commit()
 
-    candidates = await extract_candidates(text)
-    stats = merge_candidates(session, candidates, actor_user=actor.user, source="upload")
+    candidates = await extract_candidates(text, team_id=team_id)
+    stats = merge_candidates(
+        session, candidates, team_id=team_id, actor_user=actor.user, source="upload"
+    )
     return UploadResult(
         document_id=doc_id,
         filename=filename,
@@ -292,6 +311,7 @@ async def upload_document(
 async def paste_document(
     body: dict,
     actor: Actor = Depends(get_actor),
+    team_id: str = Depends(get_team_id),
     session: Session = Depends(db_session),
 ) -> UploadResult:
     require_lead(actor)
@@ -316,8 +336,10 @@ async def paste_document(
     #     )
     # )
     # session.commit()
-    candidates = await extract_candidates(text)
-    stats = merge_candidates(session, candidates, actor_user=actor.user, source="upload")
+    candidates = await extract_candidates(text, team_id=team_id)
+    stats = merge_candidates(
+        session, candidates, team_id=team_id, actor_user=actor.user, source="upload"
+    )
     return UploadResult(
         document_id=doc_id,
         filename=filename,

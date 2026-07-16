@@ -14,13 +14,14 @@ type Props = {
   messages: ChatMessage[];
   terms: Term[];
   enabled: boolean;
+  channelName?: string;
 };
 
-export function MockChat({ messages, terms, enabled }: Props) {
+export function MockChat({ messages, terms, enabled, channelName = "engineering" }: Props) {
   return (
     <div className="mock-chat">
       <div className="mock-chat-header">
-        <span className="mock-chat-title"># platform-engineering</span>
+        <span className="mock-chat-title"># {channelName}</span>
         <span className="mock-chat-hint">
           {enabled
             ? "Double-click or highlight a word for its definition"

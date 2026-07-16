@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Nav } from "@/components/Nav";
 import { RoleProvider } from "@/lib/role";
+import { TeamProvider } from "@/lib/team";
 
 export const metadata: Metadata = {
   title: "Acronym Atlas",
@@ -21,8 +22,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <RoleProvider>
-          <Nav />
-          <main>{children}</main>
+          <TeamProvider>
+            <Nav />
+            <main>{children}</main>
+          </TeamProvider>
         </RoleProvider>
       </body>
     </html>

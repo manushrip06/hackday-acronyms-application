@@ -5,7 +5,6 @@ import re
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from .config import get_settings
 from .db import Term, utcnow
 from .schemas import CandidateTerm, aliases_dumps, aliases_loads
 
@@ -33,11 +32,10 @@ def merge_candidates(
     session: Session,
     candidates: list[CandidateTerm],
     *,
+    team_id: str,
     actor_user: str,
     source: str = "upload",
 ) -> dict[str, int]:
-    settings = get_settings()
-    team_id = settings.team_id
     pending_created = pending_updated = conflicts = approved_unchanged = 0
 
     for cand in candidates:

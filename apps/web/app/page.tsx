@@ -22,8 +22,8 @@ export default function HomePage() {
           </Link>
         </div>
         <p className="msg">
-          Demo tip: switch Lead / Member in the header. Auth is hackday-simple via{" "}
-          <code>X-Role</code> headers.
+          Demo flow: pick a team → <strong>Lead</strong> uploads a doc → Review → approve → Dictionary
+          and Lookup fill in. Switch Lead / Member in the header.
         </p>
       </div>
     </>

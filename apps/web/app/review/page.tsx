@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { apiFetch, type Term } from "@/lib/api";
 import { useRole } from "@/lib/role";
+import { useTeam } from "@/lib/team";
 
 export default function ReviewPage() {
   const { role, user } = useRole();
+  const { teamId, activeTeam } = useTeam();
   const [items, setItems] = useState<Term[]>([]);
   const [error, setError] = useState("");
   const [edits, setEdits] = useState<Record<string, string>>({});
@@ -18,13 +20,13 @@ export default function ReviewPage() {
       return;
     }
     try {
-      const data = await apiFetch<Term[]>("/review", { role, user });
+      const data = await apiFetch<Term[]>("/review", { role, user, teamId });
       setItems(data);
       setEdits(Object.fromEntries(data.map((t) => [t.id, t.definition])));
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }
-  }, [role, user]);
+  }, [role, user, teamId]);
 
   useEffect(() => {
     void load();
@@ -35,25 +37,26 @@ export default function ReviewPage() {
       method: "PATCH",
       role,
       user,
+      teamId,
       body: JSON.stringify({ definition: edits[term.id] ?? term.definition }),
     });
   }
 
   async function approve(term: Term) {
     await save(term);
-    await apiFetch(`/review/${term.id}/approve`, { method: "POST", role, user });
+    await apiFetch(`/review/${term.id}/approve`, { method: "POST", role, user, teamId });
     await load();
   }
 
   async function reject(term: Term) {
-    await apiFetch(`/review/${term.id}/reject`, { method: "POST", role, user });
+    await apiFetch(`/review/${term.id}/reject`, { method: "POST", role, user, teamId });
     await load();
   }
 
   async function approveAll() {
     for (const term of items.filter((t) => t.status === "pending")) {
       await save(term);
-      await apiFetch(`/review/${term.id}/approve`, { method: "POST", role, user });
+      await apiFetch(`/review/${term.id}/approve`, { method: "POST", role, user, teamId });
     }
     await load();
   }
@@ -61,7 +64,10 @@ export default function ReviewPage() {
   return (
     <>
       <h1>Review queue</h1>
-      <p className="lede">Edit AI drafts, then approve or reject. Conflicts from re-upload appear here too.</p>
+      <p className="lede">
+        {activeTeam.name} — edit AI drafts, then approve or reject. Approved terms then show in
+        Dictionary.
+      </p>
       <div className="panel">
         <div className="row" style={{ marginBottom: "1rem" }}>
           <button className="secondary" type="button" onClick={() => void load()}>
