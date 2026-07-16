@@ -4,6 +4,18 @@ Team jargon dictionary: upload docs → extract acronyms/terms → AI draft defi
 
 Repo: [manushrip06/hackday-acronyms-application](https://github.com/manushrip06/hackday-acronyms-application)
 
+## Shared plan (everyone + agents)
+
+**Read this first so the team stays aligned:**
+
+| Doc | What it is |
+|-----|------------|
+| **[docs/PLAN.md](docs/PLAN.md)** | Master plan — product, ownership, MVP scope, build phases, demo, day-of timeline |
+| [docs/README.md](docs/README.md) | Index of all docs |
+| [AGENTS.md](AGENTS.md) | Instructions for AI coding agents |
+| [docs/architecture.md](docs/architecture.md) | API/NLP contracts |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Branches, PRs, folder ownership |
+
 ## Quick start (local)
 
 ```bash
@@ -80,6 +92,6 @@ See [teams/README.md](teams/README.md) — HTTPS tunnel + sideload zip. Demo fal
 
 [docs/demo-script.md](docs/demo-script.md) · sample docs in [docs/sample-docs/](docs/sample-docs/)
 
-## Architecture
+## Full documentation
 
-[docs/architecture.md](docs/architecture.md)
+See **[docs/PLAN.md](docs/PLAN.md)** and the [docs index](docs/README.md).

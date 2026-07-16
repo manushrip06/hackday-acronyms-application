@@ -1,5 +1,7 @@
 # Contributing
 
+**Shared plan (required reading):** [docs/PLAN.md](docs/PLAN.md) · doc index: [docs/README.md](docs/README.md) · agents: [AGENTS.md](AGENTS.md)
+
 ## Branching
 
 - Protect `main`: merge via PR only (1 review required when branch protection is enabled).

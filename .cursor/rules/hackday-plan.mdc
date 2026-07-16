@@ -1,0 +1,16 @@
+---
+description: Hackday Acronym Atlas — always align with the shared master plan
+globs:
+alwaysApply: true
+---
+
+# Acronym Atlas
+
+Before changing architecture, scope, ownership, or MVP behavior, read and follow:
+
+- [docs/PLAN.md](docs/PLAN.md) — master plan (source of truth)
+- [docs/architecture.md](docs/architecture.md) — contracts and merge rules
+- [AGENTS.md](AGENTS.md) — agent entrypoint
+- [CONTRIBUTING.md](CONTRIBUTING.md) — folder ownership
+
+Do not expand past P0 in PLAN.md without team agreement. Never wipe approved dictionary terms on document re-upload.
