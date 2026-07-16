@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRole } from "@/lib/role";
+import { useEffect, useState } from "react";
 
 const links = [
   { href: "/", label: "Home" },
@@ -16,11 +17,24 @@ export function Nav() {
   const pathname = usePathname();
   const { role, setRole, jargonAssist, setJargonAssist } = useRole();
 
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
+
   return (
     <header className="nav">
-      <div className="brand">
+      <Link href="/" className="brand">
+      <img
+        src="/state-farm-logo.png"
+        alt="State Farm logo"
+        className="brand-logo"
+      />
+      <span>
         Acronym <span>Atlas</span>
-      </div>
+      </span>
+</Link>
       <nav className="nav-links">
         {links.map((l) => (
           <Link key={l.href} href={l.href} className={pathname === l.href ? "active" : ""}>
@@ -29,6 +43,13 @@ export function Nav() {
         ))}
       </nav>
       <div className="controls">
+      <button
+      type="button"
+      className="pill"
+      onClick={() => setDarkMode(!darkMode)}
+       >
+      {darkMode ? "☀ Light" : "🌙 Dark"}
+       </button>
         <button
           type="button"
           className={`pill ${role === "lead" ? "active" : ""}`}
